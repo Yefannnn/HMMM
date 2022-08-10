@@ -35,12 +35,12 @@ export default [
     },
     children: [
       // 这个组件可能有问题，没有找到对应的组件
-      // {
-      //   path: 'list',
-      //   component: _import('hmmm/pages/questions-list'),
-      //   name: 'questions-list',
-      //   meta: { title: '基础题库', noCache: true, icon: 'component' }
-      // },
+      {
+        path: 'list',
+        component: _import('hmmm/pages/questions'),
+        name: 'questions-list',
+        meta: { title: '基础题库', noCache: true, icon: 'component' }
+      },
       {
         path: 'choice',
         component: _import('hmmm/pages/questions-choice'),
@@ -88,6 +88,24 @@ export default [
         component: _import('hmmm/pages/tags'),
         name: 'subjects-tags',
         meta: { title: '标签', noCache: true, icon: 'component' }
+      }
+    ]
+  },
+  {
+    path: '/articles',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'articles',
+    meta: {
+      title: '面试技巧',
+      icon: 'table'
+    },
+    children: [
+      {
+        path: 'list',
+        component: _import('hmmm/pages/articles'),
+        name: 'articles-list',
+        meta: { title: '面试技巧', noCache: true, icon: 'component' }
       }
     ]
   }

@@ -41,10 +41,8 @@ export const constantRouterMap = [
     component: _import('dashboard/pages/authredirect'),
     hidden: true
   },
-  { path: '/404', component: _import('dashboard/pages/404'), hidden: true },
-  { path: '/401', component: _import('dashboard/pages/401'), hidden: true },
   {
-    path: '',
+    path: '/',
     component: Layout,
     redirect: 'dashboard',
     children: [
@@ -55,7 +53,9 @@ export const constantRouterMap = [
         meta: { title: '面板', icon: 'dashboard', noCache: true }
       }
     ]
-  }
+  },
+  { path: '/404', component: _import('dashboard/pages/404'), hidden: true },
+  { path: '/401', component: _import('dashboard/pages/401'), hidden: true }
 ]
 
 /**
