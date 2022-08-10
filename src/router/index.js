@@ -74,6 +74,7 @@ router.beforeEach((to, from, next) => {
     /* has token */
     if (to.path === '/login') {
       next({ path: '/' })
+      // eslint-disable-next-line no-tabs
       NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     } else {
       if (store.getters.roles.length === 0) {

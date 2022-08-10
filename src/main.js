@@ -10,21 +10,23 @@ import i18n from './lang' // Internationalization
 import './icons' // icon
 import './errorLog' // error log
 import * as filters from './filters' // global filters
-import './mock' // simulation data
+// import './mock' // simulation data
 // font-awesome
 import 'font-awesome/css/font-awesome.css'
 /*
  * 注册 - 业务模块
  */
 import dashboard from '@/module-dashboard/' // 面板
-import base from '@/module-manage/' // 用户管理
-import hmmm from '@/module-hmmm/' // 黑马面面
+import base from '@/module-manage/'
+import hmmm from '@/module-hmmm/' // 用户管理
+// 黑马面面
 
 Vue.use(dashboard, store)
 Vue.use(base, store)
 // Vue.use(list, store)
 // Vue.use(form, store)
 // Vue.use(details, store)
+
 Vue.use(hmmm, store)
 
 /*
