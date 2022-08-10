@@ -1,5 +1,7 @@
 <template>
-  <div class='container'>题组管理</div>
+  <div class='container'>YM-题组管理
+    <p>项目开发的第一天，加油~</p>
+  </div>
 </template>
 
 <script>

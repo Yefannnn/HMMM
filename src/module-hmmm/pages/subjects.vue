@@ -1,5 +1,7 @@
 <template>
-  <div class='container'>学科管理</div>
+  <div class='container'>ZXX&&LMM-学科管理
+    <p>项目开发的第一天，加油~</p>
+  </div>
 </template>
 
 <script>

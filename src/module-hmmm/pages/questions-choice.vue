@@ -1,5 +1,7 @@
 <template>
-  <div class='container'>精选题库</div>
+  <div class='container'>YM-精选题库
+    <p>项目开发的第一天，加油~</p>
+  </div>
 </template>
 
 <script>

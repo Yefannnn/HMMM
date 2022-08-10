@@ -1,5 +1,7 @@
 <template>
-  <div class='container'>企业管理</div>
+  <div class='container'>SYY--企业管理
+    <p>项目开发的第一天，加油~</p>
+  </div>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <div class='container'>试题录入</div>
+  <div class='container'>YF-试题录入</div>
 </template>
 
 <script>
