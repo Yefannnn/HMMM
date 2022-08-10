@@ -7,8 +7,9 @@ import Layout from '@/module-dashboard/pages/layout'
 import { getToken } from '@/utils/auth'
 
 // 定义
+// 没上线之前_import 采用 require 导入    上线之后 _import 采用 import 导入
 const _import = require('./import_' + process.env.NODE_ENV) // 懒加载 导包
-const whiteList = ['/login', '/authredirect'] // 白名单 无需跳转
+const whiteList = ['/login', '/authredirect'] // 设置白名单，无权限也可以访问
 
 // 配置
 Vue.use(Router)
@@ -67,15 +68,17 @@ const router = new Router({
   routes: constantRouterMap
 })
 
+// 路由全局前置守卫
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
+  // 有权限
   if (getToken()) {
-    // determine if there has token
-    /* has token */
+    // 有权限还去login
     if (to.path === '/login') {
+      // 不允许，给我直接去首页
       next({ path: '/' })
-      // eslint-disable-next-line no-tabs
-      NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
+      // 关闭进度条
+      NProgress.done()
     } else {
       if (store.getters.roles.length === 0) {
         // 判断当前用户是否已拉取完user_info信息
@@ -101,7 +104,6 @@ router.beforeEach((to, from, next) => {
       }
     }
   } else {
-    /* has no token */
     if (whiteList.indexOf(to.path) !== -1) {
       // 在免登录白名单，直接进入
       next()
@@ -112,6 +114,7 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+// 全局后置守卫
 router.afterEach(() => {
   NProgress.done() // finish progress bar
 })
