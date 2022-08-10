@@ -7,27 +7,27 @@
  * 文章
  */
 
-import createAPI from "@/utils/request";
+import createAPI from '@/utils/request'
 
 // 文章列表
-export const list = data => createAPI("/artilces", "get");
+export const list = data => createAPI('/artilces', 'get')
 
 // 文章简单列表
-export const simple = data => createAPI("/artilces/simple", "post", data);
+export const simple = data => createAPI('/artilces/simple', 'post', data)
 
 // 文章详情
 export const detail = data =>
-  createAPI(`/articles/${data.detailId}`, "post", data);
+  createAPI(`/articles/${data.detailId}`, 'post', data)
 
 // 文章添加
-export const add = data => createAPI("/artilces", "post", data);
+export const add = data => createAPI('/artilces', 'post', data)
 
 // 文章修改
-export const update = data => createAPI(`/articles/${data.id}`, "get", data);
+export const update = data => createAPI(`/articles/${data.id}`, 'get', data)
 
 // 文章删除
 export const remove = data =>
-  createAPI(`/article/${data.detailId}`, "delete", data);
+  createAPI(`/article/${data.detailId}`, 'delete', data)
 
 // 文章状态
-export const changeState = data => createAPI(`/articles/${data.state}`, "get");
+export const changeState = data => createAPI(`/articles/${data.state}`, 'get')

@@ -1,28 +1,29 @@
-import axios from "axios";
-import { Message } from "element-ui";
-import store from "@/store";
-import { getToken } from "@/utils/auth";
+import axios from 'axios'
+import { Message } from 'element-ui'
+import store from '@/store'
+import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const instance = axios.create({
-  timeout: 5000 // request timeout
-});
+  timeout: 5000, // request timeout
+  baseURL: 'http://127.0.0.1:1024'
+})
 
 // request interceptor
 instance.interceptors.request.use(
   config => {
     // Do something before request is sent
     if (store.getters.token) {
-      config.headers.Authorization = `Bearer ${getToken()}`; // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
+      config.headers.Authorization = `Bearer ${getToken()}` // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
     }
-    return config;
+    return config
   },
   error => {
     // Do something with request error
-    console.log(error); // for debug
-    Promise.reject(error);
+    console.log(error) // for debug
+    Promise.reject(error)
   }
-);
+)
 
 // respone interceptor
 instance.interceptors.response.use(
@@ -55,51 +56,51 @@ instance.interceptors.response.use(
   //       return response.data;
   //     }
   error => {
-    console.log("err" + error); // for debug
+    console.log('err' + error) // for debug
     Message({
       message: error.message,
-      type: "error",
+      type: 'error',
       duration: 5 * 1000
-    });
-    return Promise.reject(error);
+    })
+    return Promise.reject(error)
   }
-);
+)
 
 export const createAPI = (url, method, data) => {
-  const config = {};
-  if (method === "get") {
-    config.params = data;
+  const config = {}
+  if (method === 'get') {
+    config.params = data
   } else {
-    config.data = data;
+    config.data = data
   }
   return instance({
     url,
     method,
     ...config
-  });
-};
+  })
+}
 
 export const createFormAPI = (url, method, data) => {
-  const config = {};
-  config.data = data;
+  const config = {}
+  config.data = data
   config.headers = {
-    "Cache-Control": "no-cache",
-    "Content-Type": "application/x-www-form-urlencoded"
-  };
-  config.responseType = "json";
+    'Cache-Control': 'no-cache',
+    'Content-Type': 'application/x-www-form-urlencoded'
+  }
+  config.responseType = 'json'
   config.transformRequest = [
-    function(data) {
-      let ret = "";
+    function (data) {
+      let ret = ''
       for (const it in data) {
         ret +=
-          encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&";
+          encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
       }
-      return ret;
+      return ret
     }
-  ];
+  ]
   return instance({
     url,
     method,
     ...config
-  });
-};
+  })
+}
