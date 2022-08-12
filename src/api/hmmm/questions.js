@@ -52,3 +52,27 @@ export function getUserList () {
 export function delQuestion (id) {
   return createAPI(`/questions/${id}`, 'DELETE')
 }
+
+// 加入精选
+export function addChoice (id, choiceState) {
+  return createAPI(`/questions/choice/${id}/${choiceState}`, 'PATCH')
+}
+
+// 获取精选题库数据
+export function getQueChooseList (data) {
+  return createAPI('/questions/choice', 'get', data)
+}
+
+// 预览题目详情接口
+export function getPreview (id) {
+  return createAPI(`/questions/${id}`, 'get')
+}
+// 精选题库上下架
+export function publishQueChoice (id, publishState) {
+  return createAPI(`/questions/choice/${id}/${publishState}`, 'POST')
+}
+
+// 试题审核
+export function qesCheck (id, data) {
+  return createAPI(`/questions/check/${id}`, 'POST', data)
+}
