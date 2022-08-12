@@ -10,14 +10,16 @@
             <el-button size="small" @click="clearBtn">清除</el-button>
             <el-button size="small" type="primary" @click="searchSubject">搜索</el-button>
           </el-form-item>
+          <!-- 新增学科按钮 -->
           <el-button
             class="divBtn"
             size="small"
             type="success"
             icon="el-icon-edit"
-            @click='addSubject'
-            >新增学科</el-button
-          >
+            @click='addSubject'>
+            新增学科
+            </el-button>
+            <!-- 显示有几条数据的条 -->
           <el-alert
             style="width: 100%"
             :closable="false"
