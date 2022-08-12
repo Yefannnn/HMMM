@@ -14,6 +14,12 @@ export const getCompanyListAPI = () => createAPI('/companys', 'GET')
 
 // 提交试题请求
 export const portQuestionAPI = data => createAPI('/questions', 'POST', data)
+// 题库详情
+export const getQuestionDetailAPI = data => createAPI(`/question/${data}`, 'GET')
+// 获取提足列表的数据
+export const getQuestionListAPI = data => createAPI(`/questions/randoms?page=${data.page}&pagesize=${data.pagesize}`, 'GET')
+// 删除题组的数据
+export const delQuestionDataAPI = id => createAPI(`/questions/randoms/${id},'DELETE`)
 
 /*
  * @Author: zhanglianchang
