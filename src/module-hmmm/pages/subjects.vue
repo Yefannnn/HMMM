@@ -39,9 +39,9 @@
             <el-table-column prop="username" label="创建者" width="100">
             </el-table-column>
             <el-table-column prop="addDate" label="创建日期" width="160">
-              <!-- <template v-slot="{row}">
-          {{row.addDate|parseTime}}
-        </template> -->
+              <template v-slot="{row}">
+          {{row.addDate|parseTimeByString}}
+        </template>
             </el-table-column>
             <el-table-column
               prop="isFrontDisplay"
@@ -118,6 +118,7 @@ export default {
   },
   data () {
     return {
+      table: [],
       delid: '',
       delsub: false,
       tableData: [],
@@ -156,17 +157,16 @@ export default {
     // 点击新增学科打开弹窗
     addSubject () {
       this.subjectDialog = true
-      // 新增学科接口
     },
     // 模糊搜索学科名称
     searchSubject () {
+      this.subjectList({ pagesize: 999 })
       this.tableData = this.tableData.filter((items) => {
         if (items.subjectName.includes(this.subjectNames)) {
           return items
         }
       })
-      // console.log(this.tableData)
-      this.subjectList()
+      // this.subjectList()
     },
     // 清除input值
     clearBtn () {
@@ -176,10 +176,12 @@ export default {
     eitSubject (id) {
       this.$refs.eiduse.title = '修改学科'
       this.subjectDialog = true
+      this.subjectList({ pagesize: 99 })
       this.tableData.filter(item => {
         if (item.id === id) {
           this.$refs.eiduse.formdata.subjectName = item.subjectName
-          this.$refs.eiduse.isFrontDisplay = item.isFrontDisplay
+          // this.$refs.eiduse.formdata.isFrontDisplay = item.isFrontDisplay
+          this.$refs.eiduse.formdata.id = item.id
         }
       })
     },
@@ -190,6 +192,7 @@ export default {
     },
     // 确认删除弹窗
     btnOk () {
+      this.subjectList({ pagesize: 99 })
       this.tableData.filter(async item => {
         if (item.id === this.delid) {
           await delsubject(item)
