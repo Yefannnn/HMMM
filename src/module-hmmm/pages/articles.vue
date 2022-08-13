@@ -6,25 +6,25 @@
           <el-input
             v-model="form.input"
             style="width: 200px"
-            model=""
             placeholder="根据文章标题搜索"
           />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select
-            placeholder="请选择"
-            class="slected"
-            v-model="form.select"
-          >
+          <el-select placeholder="请选择" class="slected" v-model="form.select">
             <el-option label="启用" value="1"></el-option>
             <el-option label="禁用" value="0"></el-option>
           </el-select>
-          <el-button size="small" @click="delateword" >清除</el-button>
+          <el-button size="small" @click="delateword">清除</el-button>
           <el-button size="small" type="primary" @click="getData()"
             >搜索</el-button
           >
         </el-form-item>
-        <el-button class="btn" type="success" size="small" icon="el-icon-edit"
+        <el-button
+          class="btn"
+          type="success"
+          size="small"
+          icon="el-icon-edit"
+          @click.prevent="addFn()"
           >新增技巧</el-button
         >
       </el-form>
@@ -37,7 +37,7 @@
         show-icon
       ></el-alert>
       <!-- 表格区域 -->
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table :data="tableData" border class="table" style="width: 100%">
         <el-table-column
           fixed
           type="index"
@@ -52,6 +52,15 @@
           width="280"
           align="center"
         >
+        <template slot-scope="{ row }" >
+          <span>
+            {{row.title}}
+          </span>
+          <a href="#" :class="row.videoURL? 'el-icon-film' : '' "
+           @click="play(row.videoURL)"
+           />
+
+        </template>
         </el-table-column>
         <el-table-column
           prop="visits"
@@ -79,19 +88,23 @@
         </el-table-column>
         <el-table-column prop="state" label="状态" width="120" align="center">
           <template slot-scope="{ row }">
-            {{ row.state === 1 ? "已启用" : "已禁用" }}
+            {{ row.state === 1 ? "已禁用" : "已启用" }}
           </template>
         </el-table-column>
         <el-table-column label="操作" width="160" align="center">
           <template slot-scope="{ row }">
             <!-- <pre>{{ row }}</pre> -->
-            <el-button type="text" size="small" @click="preve(row.id)"
+            <el-button type="text" size="small" @click="preve(row)"
               >预览</el-button
             >
             <el-button type="text" size="small" @click="handleStatus(row)">
               {{ row.state === 0 ? "禁" : "启" }}用
             </el-button>
-            <el-button type="text" size="small" :disabled="row.state == '0'"
+            <el-button
+              type="text"
+              size="small"
+              :disabled="row.state == '0'"
+              @click.prevent="edit(row.id)"
               >修改</el-button
             >
             <el-button
@@ -118,7 +131,16 @@
         />
       </el-row>
     </el-card>
-    <ArticlesAdd ref="acticleAdd" :isShow.sync="showDialog" />
+
+    <ArticlePreview ref="articlepreview" :isShow.sync="isShow" />
+
+    <ArticlesAdd
+      ref="articleAdd"
+      @uplist="getData"
+      :showDialog.sync="showDialog"
+    />
+     <!-- 视频弹窗 -->
+       <ArticlesVideo :play-dialog.sync="playDialog" :videoUrl="videoURL" @close="close"/>
   </div>
 </template>
 
@@ -126,16 +148,20 @@
 import { list, changeState, remove } from '@/api/hmmm/articles'
 // import { parseTimeByString } from '@/filters/index.js'
 import ArticlesAdd from '@/module-hmmm/components/articles-add'
+import ArticlePreview from '@/module-hmmm/components/articles-preview'
+import ArticlesVideo from '@/module-hmmm/components/articles-video'
 export default {
   components: {
-    ArticlesAdd
+    ArticlesAdd,
+    ArticlePreview,
+    ArticlesVideo
   },
   data () {
     return {
       showDialog: false,
-      artId: '',
-      artname: '',
-
+      isShow: false,
+      playDialog: false,
+      videoURL: '',
       form: {
         select: null, // 选择框
         input: ''
@@ -162,6 +188,7 @@ export default {
       const res = await list(form)
       this.tableData = res.data.items
       this.page.total = res.data.counts
+      // console.log(res.data)
     },
     // 一页显示多少
     handleSizeChange (val) {
@@ -173,26 +200,21 @@ export default {
       this.page.page = newpage
       this.getData()
     },
-    // 点击搜索
-    serach () {
-      this.tableData = this.tableData.filter((item) => {
-        if (item.title.includes(this.artname)) {
-          return item
-        }
-      })
+    // // 点击搜索
+    // serach () {
+    //   this.tableData = this.tableData.filter((item) => {
+    //     if (item.title.includes(this.artname)) {
+    //       return item
+    //     }
+    //   })
 
-      console.log(this.tableData)
-      this.getData(this.tableData)
-    },
-    preve (id) {
-      this.showDialog = true
-      this.artId = id
-      this.$refs.acticleAdd.getDetail(id)
-    },
+    //   console.log(this.tableData)
+    //   this.getData(this.tableData)
+    // },
+
     // 点击切换状态
     async handleStatus (val) {
       try {
-        console.log(123)
         await changeState({
           id: val.id,
           state: val.state === 0 ? 1 : 0
@@ -220,7 +242,32 @@ export default {
         this.$message('删除文章失败')
         console.log(error)
       }
+    },
+    // 预览
+    preve (row) {
+      this.isShow = true
+      this.$refs.articlepreview.preve(row)
+      // this.list = row
+    },
+    addFn () {
+      this.showDialog = true
+    },
+    // 点击修改
+    edit (id) {
+      this.showDialog = true
+      // 回显
+      this.$refs.articleAdd.getDetail(id)
+    },
+    // 点击播放视频
+    play (val) {
+      this.videoURL = val
+      this.playDialog = true
+    },
+    close () {
+      this.videoURL = ''
+      this.playDialog = false
     }
+
   }
 }
 </script>
@@ -231,5 +278,11 @@ export default {
 }
 .btn {
   float: right;
+}
+.table{
+  margin-top: 10px;
+}
+.el-icon-film{
+  color: blue;
 }
 </style>

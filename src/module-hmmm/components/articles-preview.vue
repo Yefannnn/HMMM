@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-dialog title="预览提示" width="30%" :visible="isShow" @close='cancel' >
+    <el-dialog title="预览提示" width="60%" :visible="isShow" @close='cancle' >
       <h2>{{ list.title }}</h2>
       <div>
         <span>{{ list.createTime | parseTimeByString }}</span
@@ -10,7 +10,7 @@
         <span>{{ list.visits }}</span>
       </div>
       <div class="box">
-        <p>222</p>
+        <p v-html="list.articleBody" ></p>
       </div>
     </el-dialog>
   </div>
@@ -19,6 +19,7 @@
 <script>
 export default {
   props: {
+
     isShow: {
       type: Boolean,
       default: false
@@ -26,16 +27,19 @@ export default {
   },
   data () {
     return {
-      list: {}
+      list: {
+
+      }
     }
   },
-  // 回显
   methods: {
+    // 回显数据
     preve (val) {
+      console.log(val)
       this.list = val
     },
     cancle () {
-      this.isShow = false
+      this.$emit('update:isShow', false)
     }
   }
 }
