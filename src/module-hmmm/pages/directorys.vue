@@ -2,12 +2,12 @@
   <div class="container">
     <div class="subject-container">
       <el-card class="box-card">
-        <el-form :inline="true">
+        <el-form :inline="true" :model="successForm">
           <el-form-item label-width="80px" label="目录名称">
-            <el-input v-model="directoryNames" style="width: 200px"></el-input>
+            <el-input v-model="successForm.directoryNames" style="width: 200px"></el-input>
           </el-form-item>
           <el-form-item label-width="80px" label="状态">
-            <el-select v-model="value" placeholder="请选择" @change="l">
+            <el-select v-model="successForm.label" placeholder="请选择">
               <el-option v-for="item in options" :key="item.value"
       :label="item.label"
       :value="item.value"></el-option>
@@ -112,9 +112,7 @@
         <!-- footer部分 -->
         <el-row slot="footer" type="flex" justify="end">
           <el-col>
-            <el-button type="primary" size="small" @click="btnOk"
-              >确定</el-button
-            >
+            <el-button type="primary" size="small" @click="btnOk">确定</el-button>
             <el-button size="small" @click="btnCancel">取消</el-button>
           </el-col>
         </el-row>
@@ -140,7 +138,6 @@ export default {
         value: 0,
         label: '已禁用'
       }],
-      value: '',
       delid: '',
       delsub: false,
       table2Data: [],
@@ -150,7 +147,11 @@ export default {
         total: 10
       },
       directoryDialog: false,
-      directoryNames: ''
+      successForm: {
+        directoryNames: '',
+        label: null
+      }
+
     }
   },
   mounted () {
@@ -158,12 +159,9 @@ export default {
     // this.DirectoryState()
   },
   methods: {
-    l (e) {
-      console.log(this.value)
-    },
     // 获取目录数据
     async DirectoryList () {
-      const res = await DirectoryList({ ...this.page, directoryName: this.directoryNames })
+      const res = await DirectoryList({ ...this.page, directoryName: this.directoryNames, state: this.successForm.label })
       // 获取目录列表数据
       this.table2Data = res.data.items
       // 获取分页总数目
@@ -187,16 +185,8 @@ export default {
     searchDirectory () {
       this.DirectoryList({ pagesize: 999 })
       this.table2Data = this.table2Data.filter((items) => {
-        debugger
-        console.log(items.state === this.value)
-        if (!this.value && this.value !== 0) {
-          if (items.directoryName.includes(this.directoryNames)) {
-            return items
-          }
-        } else {
-          if (items.directoryName.includes(this.directoryNames) && items.state === this.value) {
-            return items
-          }
+        if (items.directoryName.includes(this.directoryNames)) {
+          return items
         }
       })
       // this.DirectoryList()
@@ -204,7 +194,7 @@ export default {
     // 清除input值
     clearDirBtn () {
       this.directoryNames = ''
-      this.value = ''
+      this.label = ''
     },
     // 修改学科名称
     eitDirectory (val) {
