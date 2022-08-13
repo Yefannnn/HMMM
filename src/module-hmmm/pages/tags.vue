@@ -13,8 +13,10 @@
             <el-option label="禁用" value="0"></el-option>
           </el-select>
           <el-button size="small" @click="delate()" >清除</el-button>
-          <el-button size="small" type="primary" @click="getList()" >搜索</el-button>
+          <el-button class="searchBtn" size="small" type="primary" @click="getList()" >搜索</el-button>
         </el-form-item>
+        <!-- 返回学科 -->
+        <el-button @click="toSubject" v-if="showBtn" icon="el-icon-back" type="text">返回学科</el-button>
         <el-button class="btn" type="success" size="small" icon="el-icon-edit" @click="addFn()"
           >新增标签</el-button
         >
@@ -43,7 +45,7 @@
           prop="tagName"
           align="center"
           label="标签名称"
-          width="150"
+          width="160"
         >
         </el-table-column>
         <el-table-column
@@ -57,7 +59,7 @@
           prop="addDate"
           align="center"
           label="创建日期"
-          width="180"
+          width="230"
         >
           <template slot-scope="{ row }">
             {{ row.addDate | parseTimeByString }}
@@ -68,7 +70,7 @@
             {{ row.state === 1 ? "已禁用" : "已启用" }}
           </template>
         </el-table-column>
-        <el-table-column align="center" label="操作" width="180">
+        <el-table-column align="center" label="操作" width="250">
           <template slot-scope="{ row }">
             <el-button type="text" size="small" @click="handleStatus(row)">
               {{ row.state === 0 ? "禁" : "启" }}用
@@ -186,6 +188,16 @@ export default {
     edit (id) {
       this.showDialog = true
       this.$refs.tagAdd.getDetail(id)
+    },
+    toSubject () {
+      this.$router.push({
+        path: '/subjects/list'
+      })
+    }
+  },
+  computed: {
+    showBtn () {
+      return !!this.$route.query.id
     }
   }
 }
@@ -196,9 +208,12 @@ export default {
   margin-right: 10px;
 }
 .btn {
-  float: right;
+  // float: right;
 }
 .table {
   margin-top: 10px;
 }
+  .searchBtn {
+    margin-right: 260px;
+  }
 </style>

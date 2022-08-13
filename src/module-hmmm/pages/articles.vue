@@ -49,7 +49,7 @@
         <el-table-column
           prop="title"
           label="文章标题"
-          width="280"
+          width="300"
           align="center"
         >
         <template slot-scope="{ row }" >
@@ -79,7 +79,7 @@
         <el-table-column
           prop="createTime"
           label="录入时间"
-          width="120"
+          width="160"
           align="center"
         >
           <template slot-scope="{ row }">
@@ -91,7 +91,7 @@
             {{ row.state === 1 ? "已禁用" : "已启用" }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="160" align="center">
+        <el-table-column label="操作" width="230" align="center">
           <template slot-scope="{ row }">
             <!-- <pre>{{ row }}</pre> -->
             <el-button type="text" size="small" @click="preve(row)"

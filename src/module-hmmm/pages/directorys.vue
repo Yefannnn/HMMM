@@ -15,10 +15,11 @@
           </el-form-item>
           <el-form-item>
             <el-button size="small" @click="clearDirBtn">清除</el-button>
-            <el-button size="small" type="primary" @click="searchDirectory"
+            <el-button class="searchBtn" size="small" type="primary" @click="searchDirectory"
               >搜索</el-button
             >
           </el-form-item>
+
           <!-- 新增学科按钮 -->
           <el-button
             class="divBtn"
@@ -28,6 +29,8 @@
             @click="addDirectory">
             新增目录
           </el-button>
+           <!-- 动态显示返回学科 -->
+          <el-button @click="toSubject" v-if="showBtn" icon="el-icon-back" type="text">返回学科</el-button>
           <!-- 显示有几条数据的条 -->
           <el-alert
             style="width: 100%"
@@ -39,7 +42,7 @@
         </el-form>
         <div class="tables">
           <!-- 表格部分 -->
-          <el-table :data="table2Data" style="width: 100%">
+          <el-table  :data="table2Data" class="tableWidth" style="width:100%">
             <el-table-column prop="id" label="序号" width="75">
             </el-table-column>
             <el-table-column prop="subjectName" label="所属学科" width="145">
@@ -51,7 +54,7 @@
             <el-table-column
               prop="addDate"
               label="创建日期"
-              width="140">
+              width="200">
               <template v-slot="{row}">
           {{row.addDate|parseTimeByString}}
         </template>
@@ -61,12 +64,12 @@
               label="面试题数量"
               width="130">
             </el-table-column>
-            <el-table-column prop="state" label="状态" width="130">
+            <el-table-column prop="state" label="状态" width="150">
               <template v-slot="{row}">
                 {{row.state===1?'已启用':'已禁用'}}
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="145">
+            <el-table-column label="操作" width="200">
               <template v-slot="{ row }">
                 <el-button type="text" @click="disabled(row)">
                     {{row.state===0?'启用':'禁用'}}
@@ -230,6 +233,16 @@ export default {
     // 点击禁用按钮
     async disabled (val) {
       val.state = val.state === 1 ? 0 : 1
+    },
+    toSubject () {
+      this.$router.push({
+        path: '/subjects/list'
+      })
+    }
+  },
+  computed: {
+    showBtn () {
+      return !!this.$route.query.id
     }
   }
 }
@@ -244,8 +257,11 @@ export default {
     width: 100%;
     margin-top: 15px;
     .divBtn {
-      float: right;
+      // float: right;
     }
+  }
+  .searchBtn {
+    margin-right: 230px;
   }
 }
 </style>

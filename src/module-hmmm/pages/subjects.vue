@@ -36,9 +36,9 @@
             </el-table-column>
             <el-table-column prop="subjectName" label="学科名称" width="100">
             </el-table-column>
-            <el-table-column prop="username" label="创建者" width="100">
+            <el-table-column prop="username" label="创建者" width="120 ">
             </el-table-column>
-            <el-table-column prop="addDate" label="创建日期" width="160">
+            <el-table-column prop="addDate" label="创建日期" width="230">
               <template v-slot="{row}">
           {{row.addDate|parseTimeByString}}
         </template>
@@ -46,7 +46,7 @@
             <el-table-column
               prop="isFrontDisplay"
               label="前台是否显示"
-              width="100"
+              width="150"
             >
               <template v-slot="{ row }">
                 {{ row.isFrontDisplay === 1 ? "是" : "否" }}
@@ -62,10 +62,10 @@
             </el-table-column>
             <el-table-column prop="totals" label="题目数量" width="100">
             </el-table-column>
-            <el-table-column label="操作" width="230">
+            <el-table-column label="操作" width="260">
               <template v-slot="{row}">
-                <el-button type="text">学科分类</el-button>
-                <el-button type="text">学科标签</el-button>
+                <el-button type="text" @click="subjectAddBtn(row)">学科分类</el-button>
+                <el-button type="text" @click="tagBtn(row)">学科标签</el-button>
                 <el-button type="text" @click="eitSubject(row.id)">修改</el-button>
                 <el-button type="text" @click="btndelsub(row.id)">删除</el-button>
               </template>
@@ -92,7 +92,7 @@
         </el-row>
       </el-card>
     <!-- 弹窗 -->
-  <subjectsAdd ref="eiduse" @addsubject="subjectList" :subjectDialog.sync="subjectDialog" />
+  <subjectsAdd ref="eiduse" :subjectId.sync="subjectId" @addsubject="subjectList" :subjectDialog.sync="subjectDialog" />
   <!-- 删除弹窗 -->
   <el-dialog title="提示" :visible="delsub" width="30%" center @close="btnCancel">
     <span icon="el-icon-warning">此操作将永久删除该学科, 是否继续?</span>
@@ -128,7 +128,8 @@ export default {
         total: 10
       },
       subjectDialog: false,
-      subjectNames: ''
+      subjectNames: '',
+      subjectId: ''
     }
   },
   mounted () {
@@ -174,16 +175,18 @@ export default {
     },
     // 修改学科名称
     eitSubject (id) {
-      this.$refs.eiduse.title = '修改学科'
-      this.subjectDialog = true
+      // this.$refs.eiduse.title = '修改学科'
       this.subjectList({ pagesize: 99 })
-      this.tableData.filter(item => {
+      this.subjectId = String(id)
+      this.tableData.forEach(item => {
         if (item.id === id) {
+          console.log(item)
           this.$refs.eiduse.formdata.subjectName = item.subjectName
           // this.$refs.eiduse.formdata.isFrontDisplay = item.isFrontDisplay
-          this.$refs.eiduse.formdata.id = item.id
+          // this.$refs.eiduse.formdata.id = item.id
         }
       })
+      this.subjectDialog = true
     },
     // 点击删除弹出弹窗
     btndelsub (id) {
@@ -204,6 +207,26 @@ export default {
     // 关闭删除弹窗
     btnCancel () {
       this.delsub = false
+    },
+    // 跳转目录
+    subjectAddBtn (row) {
+      this.$router.push({
+        path: '/subjects/directorys',
+        query: {
+          id: row.id,
+          name: row.subjectName
+        }
+      })
+    },
+    // 跳转标签
+    tagBtn (row) {
+      this.$router.push({
+        path: '/subjects/tags',
+        query: {
+          id: row.id,
+          name: row.subjectName
+        }
+      })
     }
   }
 }

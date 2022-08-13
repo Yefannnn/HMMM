@@ -30,11 +30,14 @@ export default {
     subjectDialog: {
       type: Boolean,
       default: false
+    },
+    subjectId: {
+      type: String,
+      default: ''
     }
   },
   data () {
     return {
-      title: '新增学科',
       formdata: {
         subjectName: '',
         isFrontDisplay: this.value === true ? 0 : 1,
@@ -64,7 +67,7 @@ export default {
           if (this.formdata.id) {
             await editsubject({ ...this.formdata, id: this.formdata.id })
           } else {
-            this.title = '新增学科'
+            // this.title = '新增学科'
             await addsubject({ ...this.formdata, id: Math.random().toFixed(3) * 1000 })
             // console.log({ ...this.formdata })
           }
@@ -78,7 +81,13 @@ export default {
     btnCancel () {
       this.$refs.formData.resetFields()
       this.subjectName = ''
+      this.$emit('update:subjectId', '')
       this.$emit('update:subjectDialog', false)
+    }
+  },
+  computed: {
+    title () {
+      return this.subjectId === '' ? '新增学科' : '修改学科'
     }
   }
 }
