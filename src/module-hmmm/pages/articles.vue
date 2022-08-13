@@ -88,7 +88,7 @@
         </el-table-column>
         <el-table-column prop="state" label="状态" width="120" align="center">
           <template slot-scope="{ row }">
-            {{ row.state === 1 ? "已禁用" : "已启用" }}
+            {{ row.state === 1 ? "已启用" : "已禁用" }}
           </template>
         </el-table-column>
         <el-table-column label="操作" width="230" align="center">
@@ -98,7 +98,7 @@
               >预览</el-button
             >
             <el-button type="text" size="small" @click="handleStatus(row)">
-              {{ row.state === 0 ? "禁" : "启" }}用
+              {{ row.state === 0 ? "启" : "禁" }}用
             </el-button>
             <el-button
               type="text"
@@ -221,7 +221,7 @@ export default {
         })
         this.getData()
 
-        this.$message.success('操作成功')
+        val.state === 0 ? this.$message.success('已启用，本条允许修改！') : this.$message.success('已禁用，本条禁止修改！')
       } catch (err) {
         this.$message.success('操作失败')
       }

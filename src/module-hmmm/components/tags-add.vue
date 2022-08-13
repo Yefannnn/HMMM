@@ -69,7 +69,7 @@ export default {
     }
   },
   mounted () {
-    this.getDetail()
+    // this.getDetail()
     this.simpleSubject()
   },
   methods: {
@@ -101,10 +101,11 @@ export default {
 
     // 点击取消
     cancel () {
-      this.form = {
-        subjectName: '',
-        tagName: ''
-      }
+      // this.form = {
+      //   subjectName: '',
+      //   tagName: ''
+      // }
+      this.tagForm = {}
       this.$emit('update:showDialog', false)
     }
   }

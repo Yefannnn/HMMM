@@ -59,21 +59,21 @@
           prop="addDate"
           align="center"
           label="创建日期"
-          width="230"
+          width="264"
         >
           <template slot-scope="{ row }">
             {{ row.addDate | parseTimeByString }}
           </template>
         </el-table-column>
-        <el-table-column prop="state" align="center" label="状态" width="180">
+        <el-table-column prop="state" align="center" label="状态" width="200">
           <template slot-scope="{ row }">
-            {{ row.state === 1 ? "已禁用" : "已启用" }}
+            {{ row.state === 1 ? "已启用" : "已禁用" }}
           </template>
         </el-table-column>
         <el-table-column align="center" label="操作" width="250">
           <template slot-scope="{ row }">
             <el-button type="text" size="small" @click="handleStatus(row)">
-              {{ row.state === 0 ? "禁" : "启" }}用
+              {{ row.state === 0 ? "启用" : "禁用" }}
             </el-button>
             <el-button type="text" size="small" :disabled="row.state == '0'" @click="edit(row.id)" >
               修改
@@ -166,9 +166,9 @@ export default {
         })
         this.getList()
 
-        this.$message.success('操作成功')
+        val.state === 0 ? this.$message.success('已启用') : this.$message.success('已禁用')
       } catch (err) {
-        this.$message.success('操作失败')
+        this.$message.success('操作失败，请稍后重试')
       }
     },
     // 删除按钮
@@ -187,6 +187,7 @@ export default {
     },
     edit (id) {
       this.showDialog = true
+      this.$refs.tagAdd.tagForm.id = id
       this.$refs.tagAdd.getDetail(id)
     },
     toSubject () {
@@ -209,6 +210,7 @@ export default {
 }
 .btn {
   // float: right;
+  margin-left: 30px;
 }
 .table {
   margin-top: 10px;

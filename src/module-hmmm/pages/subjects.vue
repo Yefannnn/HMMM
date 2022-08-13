@@ -32,13 +32,13 @@
         <div class="tables">
           <!-- 表格部分 -->
           <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="id" label="序号" width="50">
+            <el-table-column prop="id" align="center" label="序号" width="50">
             </el-table-column>
-            <el-table-column prop="subjectName" label="学科名称" width="100">
+            <el-table-column prop="subjectName" align="center" label="学科名称" width="100">
             </el-table-column>
-            <el-table-column prop="username" label="创建者" width="120 ">
+            <el-table-column prop="username" align="center" label="创建者" width="120 ">
             </el-table-column>
-            <el-table-column prop="addDate" label="创建日期" width="230">
+            <el-table-column prop="addDate" align="center" label="创建日期" width="250">
               <template v-slot="{row}">
           {{row.addDate|parseTimeByString}}
         </template>
@@ -47,6 +47,7 @@
               prop="isFrontDisplay"
               label="前台是否显示"
               width="150"
+              align="center"
             >
               <template v-slot="{ row }">
                 {{ row.isFrontDisplay === 1 ? "是" : "否" }}
@@ -55,14 +56,15 @@
             <el-table-column
               prop="twoLevelDirectory"
               label="二级目录"
+              align="center"
               width="100"
             >
             </el-table-column>
-            <el-table-column prop="tags" label="标签" width="100">
+            <el-table-column align="center" prop="tags" label="标签" width="100">
             </el-table-column>
-            <el-table-column prop="totals" label="题目数量" width="100">
+            <el-table-column align="center" prop="totals" label="题目数量" width="100">
             </el-table-column>
-            <el-table-column label="操作" width="260">
+            <el-table-column align="center" label="操作" width="290">
               <template v-slot="{row}">
                 <el-button type="text" @click="subjectAddBtn(row)">学科分类</el-button>
                 <el-button type="text" @click="tagBtn(row)">学科标签</el-button>
@@ -203,6 +205,7 @@ export default {
       })
       this.subjectList()
       this.delsub = false
+      this.$message.success('删除成功啦！')
     },
     // 关闭删除弹窗
     btnCancel () {

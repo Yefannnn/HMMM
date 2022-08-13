@@ -20,6 +20,7 @@
             >
           </el-form-item>
 
+          <el-button @click="toSubject" v-if="showBtn" icon="el-icon-back" type="text">返回学科</el-button>
           <!-- 新增学科按钮 -->
           <el-button
             class="divBtn"
@@ -30,7 +31,6 @@
             新增目录
           </el-button>
            <!-- 动态显示返回学科 -->
-          <el-button @click="toSubject" v-if="showBtn" icon="el-icon-back" type="text">返回学科</el-button>
           <!-- 显示有几条数据的条 -->
           <el-alert
             style="width: 100%"
@@ -43,18 +43,19 @@
         <div class="tables">
           <!-- 表格部分 -->
           <el-table  :data="table2Data" class="tableWidth" style="width:100%">
-            <el-table-column prop="id" label="序号" width="75">
+            <el-table-column prop="id" align="center" label="序号" width="75">
             </el-table-column>
-            <el-table-column prop="subjectName" label="所属学科" width="145">
+            <el-table-column prop="subjectName" align="center" label="所属学科" width="155">
             </el-table-column>
-            <el-table-column prop="directoryName" label="目录名称" width="145">
+            <el-table-column prop="directoryName" align="center" label="目录名称" width="150">
             </el-table-column>
-            <el-table-column prop="username" label="创建者" width="135">
+            <el-table-column prop="username" align="center" label="创建者" width="150">
             </el-table-column>
             <el-table-column
               prop="addDate"
               label="创建日期"
-              width="200">
+              align="center"
+              width="230">
               <template v-slot="{row}">
           {{row.addDate|parseTimeByString}}
         </template>
@@ -62,14 +63,15 @@
             <el-table-column
               prop="totals"
               label="面试题数量"
+              align="center"
               width="130">
             </el-table-column>
-            <el-table-column prop="state" label="状态" width="150">
+            <el-table-column prop="state" align="center" label="状态" width="150">
               <template v-slot="{row}">
                 {{row.state===1?'已启用':'已禁用'}}
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="200">
+            <el-table-column align="center" label="操作" width="200">
               <template v-slot="{ row }">
                 <el-button type="text" @click="disabled(row)">
                     {{row.state===0?'启用':'禁用'}}
@@ -257,9 +259,10 @@ export default {
     width: 100%;
     margin-top: 15px;
     .divBtn {
-      // float: right;
+      margin-left: 30px;
     }
   }
+
   .searchBtn {
     margin-right: 230px;
   }
