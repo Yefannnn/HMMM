@@ -17,9 +17,11 @@ export const portQuestionAPI = data => createAPI('/questions', 'POST', data)
 // 题库详情
 export const getQuestionDetailAPI = data => createAPI(`/question/${data}`, 'GET')
 // 获取提足列表的数据
-export const getQuestionListAPI = data => createAPI(`/questions/randoms?page=${data.page}&pagesize=${data.pagesize}`, 'GET')
+export const getQuestionListAPI = data => createAPI(`/questions/randoms?page=${data.page}&pagesize=${data.pagesize}&keyword=${data.keywords}`, 'GET')
 // 删除题组的数据
 export const delQuestionDataAPI = id => createAPI(`/questions/randoms/${id},'DELETE`)
+// 预览题组的数据
+export const perviewQuestionAPI = id => createAPI(`/questions/${id}?id=${id}`, 'GET')
 
 /*
  * @Author: zhanglianchang

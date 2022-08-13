@@ -8,12 +8,12 @@
           <el-input
             style="width: 200px; margin-left: 25px"
             placeholder="根据编号搜索"
-            v-model="keywords"
+            v-model="questionPage.keywords"
           ></el-input>
         </el-col>
         <el-col :span="12" style="display: flex; justify-content: end">
-          <el-button>清除</el-button>
-          <el-button type="primary">搜索</el-button>
+          <el-button @click="questionPage.keywords = ''">清除</el-button>
+          <el-button type="primary" @click="searchBtn">搜索</el-button>
         </el-col>
       </el-row>
       <!-- 通知栏 -->
@@ -25,15 +25,16 @@
         style="width: 100%"
         :row-class-name="tableRowClassName"
       >
-        <el-table-column align="center" prop="id" label="编号" width="180"> </el-table-column>
+        <el-table-column align="center" prop="id" label="编号" width="180"></el-table-column>
         <el-table-column align="center" prop="questionType" label="题型" width="180">
             <template slot-scope="{row}">
+              <span>{{row}}</span>
               {{verifyQuestion(row.questionType)}}
             </template>
         </el-table-column>
         <el-table-column align="center" prop="questionIDs" label="题目编号">
           <template slot-scope="{ row }">
-            <el-link :underline="false">{{ row.questionIDs }}</el-link>
+            <el-link @click="openDiolog(row.id)" :underline="false">{{ row.questionIDs }}</el-link>
           </template>
         </el-table-column>
         <el-table-column align="center" prop="addTime" label="录入时间"> </el-table-column>
@@ -63,13 +64,19 @@
       :total="questionPage.counts">
     </el-pagination>
     </el-card>
+    <!-- 弹框 -->
+    <previewQuestion ref="previewQuestion" :questionId="questionId" :dialogVisible="dialogVisible" @closeDiolog="dialogVisible = false"></previewQuestion>
   </div>
 </template>
 
 <script>
 import { getQuestionListAPI, delQuestionDataAPI } from '@/api/hmmm/questions.js'
 import { difficulty } from '@/api/hmmm/constants.js'
+import previewQuestion from '@/module-hmmm/components/question-Diolog'
 export default {
+  components: {
+    previewQuestion
+  },
   data () {
     return {
       // 列表数据
@@ -78,22 +85,18 @@ export default {
       questionPage: {
         page: 1, // 当前页数
         pagesize: 5, // 页码值,
-        counts: 0 // 总数
+        counts: 0, // 总数
+        keywords: ''
       },
-      keywords: ''
+      tableDataCopy: [],
+      dialogVisible: false, // 控制弹窗变量
+      questionId: ''
     }
   },
   computed: {
     headerTitle: {
       get () {
         return '数据一共' + this.questionPage.counts + '条'
-      }
-    },
-    tableDataCopy: {
-      get () {
-        // 判断什么关键字
-
-        return 1
       }
     }
   },
@@ -152,6 +155,16 @@ export default {
       } catch (error) {
         if (error === 'cancel') { return this.$message.warning('您已取消') } else { this.$message.error(error.message) }
       }
+    },
+    // 搜索关键字
+    async searchBtn () {
+      await this.getQuestionList()
+    },
+    // 打开弹窗
+    async openDiolog (id) {
+      this.questionId = id
+      this.dialogVisible = true
+      await this.$refs.previewQuestion.perviewQuestion(id)
     }
   },
   created () {
