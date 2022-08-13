@@ -29,7 +29,6 @@ Vue.use(base, store) // 注册路由base后台管理的路由
 // Vue.use(details, store)
 
 Vue.use(hmmm, store) // 动态注册 hmmm 的业务路由，我们开发的几个模块主要就是再这里注册的
-
 /*
  * 注册 - 组件
  */

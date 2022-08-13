@@ -1,5 +1,4 @@
 <template>
-
     <el-upload
       class="upload-demo"
       action="#"
@@ -7,7 +6,6 @@
       :file-list="fileList"
       :before-upload = "beforeUpload"
     >
-    <div @click.prevent="delBtn"  class="delBtn"  alt=""></div>
       <el-button  :disabled="!!this.upLoadUrl.code"   size="small" class="uploadBtn" >上传图片</el-button>
     </el-upload>
 
@@ -36,7 +34,7 @@ export default {
   },
   methods: {
     // changeFile (file, fileList) {
-    //   console.log('file', file)
+    //   console.log('file', file)000
     //   console.log('fileList', fileList)
     // },
     beforeUpload (file) {
