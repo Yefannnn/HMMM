@@ -6,6 +6,7 @@
       </el-form-item>
       <el-form-item label="是否显示">
         <el-switch
+        @change="values"
           v-model="value"
           active-color="#13ce66"
           inactive-color="#ff4949">
@@ -36,27 +37,41 @@ export default {
       title: '新增学科',
       formdata: {
         subjectName: '',
-        isFrontDisplay: this.value === true ? 0 : 1
+        isFrontDisplay: this.value === true ? 0 : 1,
+        id: ''
       },
       value: true,
       rules: [{ required: true, message: '请输入学科名称', trigger: 'blur' }]
     }
   },
   methods: {
+    values (e) {
+      // console.log('e', e)
+      // debugger
+      // this.value = e
+      // console.log(this.value)
+      // console.log(this.formdata.isFrontDisplays)
+    },
     btnOk () {
       this.$refs.formData.validate(async isOK => {
         if (isOK) {
+          // 给isFrontDisplay重新赋值
+          if (this.value === true) {
+            this.formdata.isFrontDisplay = 1
+          } else {
+            this.formdata.isFrontDisplay = 0
+          }
           if (this.formdata.id) {
-            await editsubject({ ...this.formdata })
-            this.$emit('addsubject')
-            this.$emit('update:subjectDialog', false)
+            await editsubject({ ...this.formdata, id: this.formdata.id })
           } else {
             this.title = '新增学科'
-            await addsubject({ ...this.formdata })
+            await addsubject({ ...this.formdata, id: Math.random().toFixed(3) * 1000 })
             // console.log({ ...this.formdata })
-            this.$emit('addsubject')
-            this.$emit('update:subjectDialog', false)
           }
+          this.$emit('addsubject')
+          this.$refs.formData.resetFields()
+          this.subjectName = ''
+          this.$emit('update:subjectDialog', false)
         }
       })
     },
