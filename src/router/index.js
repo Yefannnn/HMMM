@@ -16,21 +16,21 @@ Vue.use(Router)
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 /**
- * 基础路由
- *
-* hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
-* alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
-*                                if not set alwaysShow, only more than one route under the children
-*                                it will becomes nested mode, otherwise not show the root menu
-* redirect: noredirect           if `redirect:noredirect` will no redirct in the breadcrumb
-* name:'router-name'             the name is used by <keep-alive> (must set!!!)
-* meta : {
-    roles: ['admin','editor']     will control the page roles (you can set multiple roles)
-    title: 'title'               the name show in submenu and breadcrumb (recommend set)
-    icon: 'svg-name'             the icon show in the sidebar,
-    noCache: true                if true ,the page will no be cached(default is false)
-  }
-**/
+   * 基础路由
+   *
+  * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
+  * alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
+  *                                if not set alwaysShow, only more than one route under the children
+  *                                it will becomes nested mode, otherwise not show the root menu
+  * redirect: noredirect           if `redirect:noredirect` will no redirct in the breadcrumb
+  * name:'router-name'             the name is used by <keep-alive> (must set!!!)
+  * meta : {
+      roles: ['admin','editor']     will control the page roles (you can set multiple roles)
+      title: 'title'               the name show in submenu and breadcrumb (recommend set)
+      icon: 'svg-name'             the icon show in the sidebar,
+      noCache: true                if true ,the page will no be cached(default is false)
+    }
+  **/
 export const constantRouterMap = [
   {
     path: '/login',
@@ -60,11 +60,20 @@ export const constantRouterMap = [
 ]
 
 /**
- * 配置路由
- **/
+   * 配置路由
+   **/
 const router = new Router({
   // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
+  // scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior (to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    }
+    return {
+      x: 0,
+      y: 0
+    }
+  },
   routes: constantRouterMap
 })
 
@@ -75,6 +84,8 @@ router.beforeEach((to, from, next) => {
   if (getToken()) {
     // 有权限还去login
     if (to.path === '/login') {
+      // 让页面回到顶部
+      document.documentElement.scrollTop = 0
       // 不允许，给我直接去首页
       next({ path: '/' })
       // 关闭进度条
@@ -90,24 +101,34 @@ router.beforeEach((to, from, next) => {
             store.dispatch('GenerateRoutes', { roles }).then(() => {
               // 根据roles权限生成可访问的路由表
               router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
+              // 让页面回到顶部
+              document.documentElement.scrollTop = 0
               next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
             })
           })
           .catch(() => {
             store.dispatch('FedLogOut').then(() => {
               Message.error('验证失败, 请重新登录')
+              // 让页面回到顶部
+              document.documentElement.scrollTop = 0
               next({ path: '/login' })
             })
           })
       } else {
+        // 让页面回到顶部
+        document.documentElement.scrollTop = 0
         next()
       }
     }
   } else {
     if (whiteList.indexOf(to.path) !== -1) {
       // 在免登录白名单，直接进入
+      // 让页面回到顶部
+      document.documentElement.scrollTop = 0
       next()
     } else {
+      // 让页面回到顶部
+      document.documentElement.scrollTop = 0
       next('/login') // 否则全部重定向到登录页
       NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
     }
@@ -120,11 +141,11 @@ router.afterEach(() => {
 })
 
 /**
- * 导出 基础路由
- **/
+   * 导出 基础路由
+   **/
 export default router
 
 /**
- * 导出 业务路由
- **/
+   * 导出 业务路由
+   **/
 export const asyncRouterMap = [{ path: '*', redirect: '/404', hidden: true }]

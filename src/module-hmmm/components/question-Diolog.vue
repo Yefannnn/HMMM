@@ -77,6 +77,7 @@
           <!-- 单选框组 -->
           <el-radio-group v-model="OptionIsRight">
             <el-radio
+            disabled
               :label="optionObj.code"
               v-for="optionObj in previewDiolog.options"
               :key="optionObj.code"
@@ -84,7 +85,7 @@
 
             >
               <span>{{ optionObj.code }} : </span>
-              <el-input v-model="optionObj.title"></el-input>
+              <el-input v-model="optionObj.title" disabled></el-input>
             </el-radio>
           </el-radio-group>
         </el-form-item>

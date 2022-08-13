@@ -212,8 +212,8 @@ export default {
         province: '', // 省份
         city: '', // 地区
         direction: '', // 方向
-        questionType: 1, // 题型
-        difficulty: 1, // 难度
+        questionType: '单选', // 题型
+        difficulty: '简单', // 难度
         question: '', // 题干
         options: [
           {
@@ -331,7 +331,7 @@ export default {
     },
     async onSubmit () {
       try {
-        this.$refs.questionForm.validate()
+        await this.$refs.questionForm.validate()
         // 将默认的题型和难度的数据转换成字符串类型
         this.questionForm.questionType = String(this.questionForm.questionType)
         this.questionForm.difficulty = String(this.questionForm.difficulty)
@@ -356,9 +356,11 @@ export default {
         // 删除表单的验证
         this.$refs.questionForm.resetFields()
       } catch (error) {
-        if (error.message === 'Request failed with status code 422') {
+        console.log(error)
+        if (error === false) {
           return this.$message.error('请检查必填项')
         } else {
+          // alert('111')
           this.$message.error(error.message)
         }
       }

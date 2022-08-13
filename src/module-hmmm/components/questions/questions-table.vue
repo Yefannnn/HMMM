@@ -13,9 +13,10 @@
       </el-table-column>
       <el-table-column prop="subject" label="学科" width="80">
       </el-table-column>
-      <el-table-column prop="catalog" label="目录" width="80">
+      <el-table-column prop="catalog" align="center" label="目录" width="80">
       </el-table-column>
       <el-table-column
+      align="center"
         prop="questionType"
         label="题型"
         width="80"
@@ -23,6 +24,7 @@
       >
       </el-table-column>
       <el-table-column
+      align="center"
         prop="question"
         label="题干"
         width="280"
@@ -30,6 +32,7 @@
       >
       </el-table-column>
       <el-table-column
+      align="center"
         prop="addDate"
         label="录入时间"
         width="180"
@@ -43,7 +46,7 @@
         :formatter="filterDifficulty"
       >
       </el-table-column>
-      <el-table-column prop="creator" label="录入人" width="80">
+      <el-table-column align="center" prop="creator" label="录入人" width="80">
       </el-table-column>
       <template v-if="isChoice">
         <el-table-column
@@ -91,7 +94,7 @@
           >
         </template>
       </el-table-column>
-      <el-table-column v-else label="操作" width="180">
+      <el-table-column align="center" v-else label="操作" width="250">
         <template slot-scope="{ row }">
           <el-button
             type="primary"
