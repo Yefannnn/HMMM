@@ -20,4 +20,7 @@ export const detail = id =>
 // 标签添加
 export const add = data => createAPI('/tags', 'post', data)
 // 标签修改
-export const update = id => createAPI(`/tags/${id}`, 'put')
+export const update = data => createAPI(`/tags/${data.id}`, 'put', data)
+
+// 学科简单列表
+export const simpleSubject = data => createAPI('/subjects/simple', 'get', data)

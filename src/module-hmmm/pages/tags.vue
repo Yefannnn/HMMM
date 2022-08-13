@@ -96,7 +96,7 @@
         />
       </el-row>
     </el-card>
-    <TagAdd ref="tagAdd" @uplist="getList()" :showDialog.sync="showDialog" ></TagAdd>
+    <TagAdd ref="tagAdd" @uplist="getList" :showDialog.sync="showDialog" ></TagAdd>
   </div>
 </template>
 <script>
