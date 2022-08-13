@@ -6,7 +6,7 @@ import { getToken } from '@/utils/auth'
 // create an axios instance
 const instance = axios.create({
   timeout: 5000, // request timeout
-  baseURL: 'http://127.0.0.1:1024'
+  baseURL: 'http://192.168.103.94:1024'
 })
 
 // request interceptor

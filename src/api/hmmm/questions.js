@@ -14,6 +14,14 @@ export const getCompanyListAPI = () => createAPI('/companys', 'GET')
 
 // 提交试题请求
 export const portQuestionAPI = data => createAPI('/questions', 'POST', data)
+// 题库详情
+export const getQuestionDetailAPI = data => createAPI(`/question/${data}`, 'GET')
+// 获取提足列表的数据
+export const getQuestionListAPI = data => createAPI(`/questions/randoms?page=${data.page}&pagesize=${data.pagesize}&keyword=${data.keywords}`, 'GET')
+// 删除题组的数据
+export const delQuestionDataAPI = id => createAPI(`/questions/randoms/${id},'DELETE`)
+// 预览题组的数据
+export const perviewQuestionAPI = id => createAPI(`/questions/${id}?id=${id}`, 'GET')
 
 /*
  * @Author: zhanglianchang
@@ -51,4 +59,28 @@ export function getUserList () {
 // 基础题库删除
 export function delQuestion (id) {
   return createAPI(`/questions/${id}`, 'DELETE')
+}
+
+// 加入精选
+export function addChoice (id, choiceState) {
+  return createAPI(`/questions/choice/${id}/${choiceState}`, 'PATCH')
+}
+
+// 获取精选题库数据
+export function getQueChooseList (data) {
+  return createAPI('/questions/choice', 'get', data)
+}
+
+// 预览题目详情接口
+export function getPreview (id) {
+  return createAPI(`/questions/${id}`, 'get')
+}
+// 精选题库上下架
+export function publishQueChoice (id, publishState) {
+  return createAPI(`/questions/choice/${id}/${publishState}`, 'POST')
+}
+
+// 试题审核
+export function qesCheck (id, data) {
+  return createAPI(`/questions/check/${id}`, 'POST', data)
 }
