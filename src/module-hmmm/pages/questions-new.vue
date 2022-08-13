@@ -2,7 +2,7 @@
   <div class="container">
     <el-card>
       <div class="header">
-        <h4>试题录入</h4>
+        <h4>{{$route.query?.id ? '试题修改' : '试题新增'}}</h4>
       </div>
       <div class="fromMain">
         <el-form
@@ -33,8 +33,8 @@
               class="elSelect"
             >
               <el-option
-                v-for="item in catalogue"
-                :key="item.value"
+                v-for="(item,index) in catalogue"
+                :key="index"
                 :label="item.label"
                 :value="item.value"
               ></el-option>
@@ -105,7 +105,7 @@
               :key="item.value"
               v-model="questionForm.questionType"
             >
-              <el-radio style="margin-right: 30px" :label="item.value">{{
+              <el-radio style="margin-right: 30px" :label="item.label">{{
                 item.label
               }}</el-radio>
             </el-radio-group>
@@ -117,7 +117,7 @@
               v-for="item in difficultyList"
               :key="item.value"
             >
-              <el-radio style="margin-right: 30px" :label="item.value">{{
+              <el-radio style="margin-right: 30px" :label="item.label">{{
                 item.label
               }}</el-radio>
             </el-radio-group>
@@ -153,11 +153,11 @@
             />
           </el-form-item>
           <!-- 题目备注 -->
-          <el-form-item label="题目备注">
+          <el-form-item label="题目备注" prop="remarks">
             <el-input type="textarea" v-model="questionForm.remarks"></el-input>
           </el-form-item>
           <!-- 试题标签 -->
-          <el-form-item label="试题标签">
+          <el-form-item label="试题标签" prop="tags">
             <el-select
               multiple
               v-model="questionForm.tags"
@@ -177,7 +177,7 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button :type="this.$router.query?.id? 'success' :'primary'" @click="onSubmit">{{this.$router.query?.id? '确认修改' : "确认添加"}}</el-button>
+            <el-button :type="this.$route.query?.id? 'success' :'primary'" @click="onSubmit">{{this.$route.query?.id? '确认修改' : "确认添加"}}</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -191,7 +191,8 @@ import {
   catalogueListApi,
   getCompanyListAPI,
   portQuestionAPI,
-  getQuestionDetailAPI
+  getQuestionDetailAPI,
+  exitQuestionAPI
 } from '@/api/hmmm/questions.js'
 import RichText from '../components/rich-text.vue'
 import { provinces, citys } from '@/api/hmmm/citys.js'
@@ -254,6 +255,7 @@ export default {
       questionTypeList: questionType, // 题型列表
       difficultyList: difficulty, // 难度
       tagsList: [], // 标签数组
+      questionDetial: [], // 回显数据
       QuestionsRules: {
         subjectID: [{ required: true, message: '请写必填项', trigger: 'blur' }],
         catalogID: [{ required: true, message: '请写必填项', trigger: 'blur' }],
@@ -268,21 +270,23 @@ export default {
         difficulty: [
           { required: true, message: '请写必填项', trigger: 'blur' }
         ],
-        question: [{ required: true, message: '请写必填项', trigger: 'blur' }]
+        question: [{ required: true, message: '请写必填项', trigger: 'blur' }],
+        remarks: [{ required: true, message: '请写必填项', trigger: 'blur' }],
+        tags: [{ required: true, message: '请写必填项', trigger: 'blur' }]
       }
       // routerId: this.$router.query.id
     }
   },
   created () {
     this.questionOptionsCopy = this.questionForm.options
+    // 回显数据
+    this.getQuestionDetail()
     // 获取学科分类
     this.questionSubject()
     // 获取公司名称
     this.getCompanyList()
     // 获取省份
     this.GetProvinces()
-    // 回显数据
-    this.getQuestionDetail()
   },
   methods: {
     // 获取学科的分类
@@ -298,7 +302,9 @@ export default {
     async catalogueList (newvalue) {
       try {
         const { data } = await catalogueListApi(newvalue)
+        this.catalogue.splice(0)
         this.catalogue.push(...data)
+        return this.catalogue
       } catch (error) {
         this.$message.error(error.message)
       }
@@ -323,24 +329,28 @@ export default {
     changeTags (value) {
       this.tagsList = value
     },
-    // 选项的单选回调
-    // optionRadio (code) {
-    //   // 循环将除了这个code的对象的isRight改成 0
-    //   this.questionForm.options.forEach(item => { item.isRight = 0 })
-    //   const codeObj = this.questionForm.options.find(item => item.code === code)
-    //   console.log('codeObj', codeObj)
-    // },
     async onSubmit () {
       try {
         this.$refs.questionForm.validate()
         // 将默认的题型和难度的数据转换成字符串类型
         this.questionForm.questionType = String(this.questionForm.questionType)
         this.questionForm.difficulty = String(this.questionForm.difficulty)
-        await portQuestionAPI({
-          ...this.questionForm,
-          tags: this.tagsList.join(',')
-        })
-        this.$message.success('添加成功')
+        this.questionForm.videoURL = String(this.questionForm.videoURL)
+
+        // 判断是新增还是修改
+        // 新增逻辑
+        if (!this.$route.query?.id) {
+          await portQuestionAPI({
+            ...this.questionForm,
+            tags: this.tagsList.join(',')
+          })
+          this.$message.success('添加成功')
+        } else {
+          // 修改逻辑
+          await exitQuestionAPI({ ...this.questionForm, id: Number(this.$route.query.id), tags: this.tagsList.join(',') })
+          this.$message.success('修改成功')
+        }
+
         // 跳转基础题库
         this.$router.push('/questions/list')
         // 删除表单的验证
@@ -370,10 +380,21 @@ export default {
     },
     // 回显
     async getQuestionDetail () {
-      if (!this.$router.query?.id) return
+      if (!this.$route.query?.id) return
       // 发请求
       try {
-        await getQuestionDetailAPI(this.$router.query?.id)
+        const { data } = await getQuestionDetailAPI(this.$route.query?.id)
+        this.questionForm = JSON.parse(JSON.stringify(data))
+        // // 回显目录
+        const catalog = await this.catalogueList(this.questionForm.subjectID)
+        this.questionForm.catalogID = catalog.find(item => {
+          return item.value === data.catalogID
+        }).value
+        // 回显城市
+        this.questionForm.city = this.CitysList.find(item => item === data.city)
+        // 回显tags
+        this.questionForm.tags = data.tags.split(',')
+
         // 数据赋值
       } catch (error) {
         this.$message.error(error.message)

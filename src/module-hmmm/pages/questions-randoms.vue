@@ -9,11 +9,12 @@
             style="width: 200px; margin-left: 25px"
             placeholder="根据编号搜索"
             v-model="questionPage.keywords"
+            @keydown.native.enter="searchBtn"
           ></el-input>
         </el-col>
         <el-col :span="12" style="display: flex; justify-content: end">
-          <el-button @click="questionPage.keywords = ''">清除</el-button>
-          <el-button type="primary" @click="searchBtn">搜索</el-button>
+          <el-button @click="cleanBtn">清除</el-button>
+          <el-button type="primary"  @click="searchBtn">搜索</el-button>
         </el-col>
       </el-row>
       <!-- 通知栏 -->
@@ -28,13 +29,12 @@
         <el-table-column align="center" prop="id" label="编号" width="180"></el-table-column>
         <el-table-column align="center" prop="questionType" label="题型" width="180">
             <template slot-scope="{row}">
-              <span>{{row}}</span>
               {{verifyQuestion(row.questionType)}}
             </template>
         </el-table-column>
-        <el-table-column align="center" prop="questionIDs" label="题目编号">
-          <template slot-scope="{ row }">
-            <el-link @click="openDiolog(row.id)" :underline="false">{{ row.questionIDs }}</el-link>
+        <el-table-column width="200" align="center" prop="questionIDs" label="题目编号">
+          <template  slot-scope="{ row }">
+            <el-link v-for="(item,index) in row.questionIDs" :key="index" @click="openDiolog(item.id)" :underline="false">{{ item.number }}</el-link>
           </template>
         </el-table-column>
         <el-table-column align="center" prop="addTime" label="录入时间"> </el-table-column>
@@ -65,13 +65,13 @@
     </el-pagination>
     </el-card>
     <!-- 弹框 -->
-    <previewQuestion ref="previewQuestion" :questionId="questionId" :dialogVisible="dialogVisible" @closeDiolog="dialogVisible = false"></previewQuestion>
+    <previewQuestion ref="previewQuestion" :questionId="questionId" :dialogVisible="showDialog" @closeDiolog="showDialog = false"></previewQuestion>
   </div>
 </template>
 
 <script>
 import { getQuestionListAPI, delQuestionDataAPI } from '@/api/hmmm/questions.js'
-import { difficulty } from '@/api/hmmm/constants.js'
+import { questionType } from '@/api/hmmm/constants.js'
 import previewQuestion from '@/module-hmmm/components/question-Diolog'
 export default {
   components: {
@@ -89,7 +89,7 @@ export default {
         keywords: ''
       },
       tableDataCopy: [],
-      dialogVisible: false, // 控制弹窗变量
+      showDialog: false, // 控制弹窗变量
       questionId: ''
     }
   },
@@ -109,6 +109,10 @@ export default {
       }
       return 'success-row'
     },
+    cleanBtn () {
+      this.questionPage.keywords = ''
+      this.getQuestionList()
+    },
     // 获取题组列表的数据
     async getQuestionList () {
       const {
@@ -116,14 +120,6 @@ export default {
         data: { items }
       } = await getQuestionListAPI(this.questionPage)
       this.questionPage.counts = data.counts
-      // 将items里面的questionIs拼接成字符串
-      items.forEach((item) => {
-        let tempVar = ''
-        item.questionIDs.forEach((obj) => {
-          tempVar += obj.number
-        })
-        item.questionIDs = tempVar
-      })
       // 收集数据
       this.tableData.splice(0)
       this.tableData.push(...items)
@@ -131,7 +127,7 @@ export default {
     },
     // 验证题型
     verifyQuestion (typeNumber) {
-      return difficulty.find(item => item.value === Number(typeNumber)).label
+      return questionType?.find(item => item.value === Number(typeNumber)).label
     },
     // 数目改变
     handleSizeChange (size) {
@@ -162,9 +158,12 @@ export default {
     },
     // 打开弹窗
     async openDiolog (id) {
-      this.questionId = id
-      this.dialogVisible = true
+      this.showDialog = true
+      // 请求数据
       await this.$refs.previewQuestion.perviewQuestion(id)
+    },
+    keyEnter () {
+      alert('111')
     }
   },
   created () {

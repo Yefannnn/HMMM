@@ -18,7 +18,14 @@ import 'font-awesome/css/font-awesome.css'
  */
 import dashboard from '@/module-dashboard/' // 面板
 import base from '@/module-manage/' // 后台管理
-import hmmm from '@/module-hmmm/' // 用户管理
+import hmmm from '@/module-hmmm/' // 动态注册 hmmm 的业务路由，我们开发的几个模块主要就是再这里注册的
+/*
+ * 注册 - 组件
+ */
+
+import VideoPlayer from 'vue-video-player'
+import 'vue-video-player/src/custom-theme.css'
+import 'video.js/dist/video-js.css' // 用户管理
 
 // 默认调用第一个参数中的install方法，第二个参数开始就是传参
 Vue.use(dashboard, store) // 注册主页时候，将store实例传入，可以调用registerModule，即可 注册store 的模块
@@ -28,10 +35,8 @@ Vue.use(base, store) // 注册路由base后台管理的路由
 // Vue.use(form, store)
 // Vue.use(details, store)
 
-Vue.use(hmmm, store) // 动态注册 hmmm 的业务路由，我们开发的几个模块主要就是再这里注册的
-/*
- * 注册 - 组件
- */
+Vue.use(hmmm, store)
+Vue.use(VideoPlayer)
 
 // 饿了么
 Vue.use(Element, {
