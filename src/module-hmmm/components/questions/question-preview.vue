@@ -16,11 +16,29 @@
       <p>【题干】：</p>
       <div class="qes">{{ data.question }}</div>
       <p>{{ data.questionType }} 选项：（以下选中的选项为正确答案）</p>
-      <div class="choose" v-if="data.questionType!=='简答'">
-          <el-radio v-for="item in data.options" :key="item.id" :label="item.id" v-model="trueChoice">
-            {{ item.code }}:{{ item.title }}
-          </el-radio>
+      <!-- 单选题 -->
+      <div class="choose" v-if="data.questionType === '单选'">
+        <el-radio
+          v-for="item in data.options"
+          :key="item.id"
+          :label="item.isRight"
+          :value="oneTrueChoice"
+        >
+          {{ item.code }}:{{ item.title }}
+        </el-radio>
       </div>
+      <!-- 多选题 -->
+      <div class="choose" v-else-if="data.questionType === '多选'">
+        <el-checkbox
+          v-for="item in data.options"
+          :key="item.id"
+          :label="item.isRight"
+          :value="manyTrueChoice"
+        >
+          {{ item.title }}
+        </el-checkbox>
+      </div>
+      <!-- 简答题 -->
       <div v-else>
         <el-input></el-input>
       </div>
@@ -29,16 +47,15 @@
     <!-- 参考答案区域 -->
     <div>
       <span>【参考答案】：</span>
-      <el-button type="danger" size="small">视频答案按钮</el-button>
-      <div class="videoBox">
- <video-player
-        class="video-player vjs-custom-skin"
-        ref="videoPlayer"
-        :playsinline="true"
-        :options="playerOptions"
-      ></video-player>
+      <el-button type="danger" size="small" @click="isShowVideo=true">视频答案按钮</el-button>
+      <div class="videoBox" v-if="isShowVideo">
+        <video-player
+          class="video-player vjs-custom-skin"
+          ref="videoPlayer"
+          :playsinline="true"
+          :options="playerOptions"
+        ></video-player>
       </div>
-
     </div>
     <hr />
     <!-- 答案解析 -->
@@ -59,7 +76,7 @@
 <script>
 import { getPreview } from '@/api/hmmm/questions.js'
 import { questionType, difficulty } from '@/api/hmmm/constants.js'
-import { findDifficultyType, html2Text } from '@/utils/index.js'
+import { findDifficultyType, html2Text, toArray } from '@/utils/index.js'
 
 import 'video.js/dist/video-js.css'
 import { videoPlayer } from 'vue-video-player'
@@ -81,6 +98,9 @@ export default {
       radio: '',
       data: '',
       trueChoice: '',
+      oneTrueChoice: 1,
+      manyTrueChoice: [1],
+      isShowVideo: false, // 是否展示视频
       // 视频播放
       playerOptions: {
         playbackRates: [0.5, 1.0, 1.5, 2.0], // 可选择的播放速度
@@ -94,9 +114,9 @@ export default {
         sources: [
           {
             type: 'video/mp4',
-            src:
-            // 'https://v-cdn.zjol.com.cn/277004.mp4'
-              'https://aliyun.oss.careyshop.cn/uploads/files/20191113/9bbf7ac9-a452-445b-8152-4443bc3505e8.mp4?type=aliyun'
+            src: ''
+            // 'https://v-cdn.zjol.com.cn/277004'
+            // 'https://aliyun.oss.careyshop.cn/uploads/files/20191113/9bbf7ac9-a452-445b-8152-4443bc3505e8.mp4?type=aliyun'
           }
         ],
         poster: '', // 你的封面地址
@@ -114,23 +134,24 @@ export default {
   methods: {
     close () {
       this.$emit('update:isShow', false)
+      this.isShowVideo = false
     },
     async getPreviewMsg (id) {
       const { data } = await getPreview(id)
       this.data = data
-      console.log(data)
-      this.data.questionType = findDifficultyType(
-        data.questionType - 0,
-        questionType
-      )
-      this.data.difficulty = findDifficultyType(
-        data.difficulty - 0,
-        difficulty
-      )
+      this.data.questionType = findDifficultyType(data.questionType - 0, questionType)
+      this.data.difficulty = findDifficultyType(data.difficulty - 0, difficulty)
       this.data.question = html2Text(data.question)
       this.data.answer = html2Text(data.answer)
-      this.trueChoice = data.options.filter(item => item.isRight === 1)[0]?.id
-      this.playerOptions.sources[0].src = 'require(' + data.videoURL + ')'
+
+      // 第一种解决方法：通过方法来控制最终 单选 多选 选中的值(第二种：直接通过label属性绑定isRight,然后用value绑定正确值)
+
+      /*  const trueChoiceList = data.options.filter((item) => item.isRight === 1)
+      // 单选是获取数组第一个的id值  多选是获取数组中所有id的值并放进数组
+      this.trueChoice = data.questionType !== '多选' ? (trueChoiceList[0]?.id) : toArray(trueChoiceList, 'id') */
+
+      this.playerOptions.sources[0].src = data.videoURL
+      console.log(this.playerOptions.sources[0].src)
     }
   }
 }
@@ -155,7 +176,7 @@ export default {
   .txt {
     padding: 14px 0;
   }
-  .videoBox{
+  .videoBox {
     margin-top: 5px;
     width: 400px;
   }

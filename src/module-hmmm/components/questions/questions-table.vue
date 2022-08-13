@@ -283,13 +283,14 @@ export default {
     // 提交审核
     async submitCheck () {
       try {
+        if (!this.textarea) return this.$message('请输入审核信息')
         await qesCheck(this.checkId, { id: this.checkId, chkState: this.checkRes - 0, chkRemarks: this.textarea })
         this.closeCheck()
         this.$message.success('审核成功')
         // 通知父组件重新拉取信息
         this.$emit('getChangeData')
       } catch (error) {
-        this.$message.error(error)
+        this.$message.error('取消操作')
       }
     },
     // 上架
