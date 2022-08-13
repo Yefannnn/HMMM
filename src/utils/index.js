@@ -323,7 +323,7 @@ export function deepClone (source) {
   return targetObj
 }
 
-// 过滤题型和难度
+// 过滤枚举类型
 export function findDifficultyType (num, data) {
   return data.filter(item => item.value === num - 0)[0].label
 }

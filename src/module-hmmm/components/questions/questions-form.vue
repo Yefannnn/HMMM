@@ -1,12 +1,11 @@
 <template>
-  <!-- 题库模板 -->
-   <div class="container">
-    <el-card>
+  <!-- 题库顶部表单模板 -->
+   <div>
       <!-- 头部提示和按钮区域 -->
       <div class="head">
         <span class="headSpan">说明：目前支持学科和关键字条件筛选</span>
         <el-button icon="el-icon-edit" type="success" size="small"
-          >新增试题</el-button
+          @click="$router.push('/questions/new')">新增试题</el-button
         >
       </div>
 
@@ -141,92 +140,16 @@
           </el-col>
         </el-row>
       </el-form>
-      <slot></slot>
-      <el-alert :title="`数据一共${pageInfo.counts}条`" type="info" show-icon :closable="false"> </el-alert>
-      <!-- 数据表格区域 -->
-      <el-table
-      :data="tableData">
-      <el-table-column
-        prop="number"
-        label="试题编号"
-        width="120">
-      </el-table-column>
-      <el-table-column
-        prop="subject"
-        label="学科"
-        width="80">
-      </el-table-column>
-      <el-table-column
-        prop="catalog"
-        label="目录"
-        width="80">
-      </el-table-column>
-      <el-table-column
-        prop="questionType"
-        label="题型"
-        width="80"
-        :formatter="filterDifficulty">
-      </el-table-column>
-      <el-table-column
-        prop="question"
-        label="题干"
-        width="280"
-        :formatter="filterHtml">
-      </el-table-column>
-      <el-table-column
-        prop="addDate"
-        label="录入时间"
-        width="180"
-        :formatter="filterTime">
-      </el-table-column>
-      <el-table-column
-        prop="difficulty"
-        label="难度"
-        width="80"
-        :formatter="filterType">
-      </el-table-column>
-      <el-table-column
-        prop="creator"
-        label="录入人"
-        width="80">
-      </el-table-column>
-      <el-table-column
-        label="操作"
-        width="180">
-        <template slot-scope="scope">
-          <el-button type="primary" icon="el-icon-view" plain circle size="small"></el-button>
-          <el-button type="success" icon="el-icon-edit" plain circle size="small"></el-button>
-          <el-button type="danger" icon="el-icon-delete" plain circle size="small" @click="deleteMsg(scope.row.id)"></el-button>
-          <el-button type="warning" icon="el-icon-check" plain circle size="small" @click="check"></el-button>
-      </template>
-      </el-table-column>
-
-    </el-table>
-    <!-- 分页 -->
-    <div class="block">
-    <el-pagination background
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      layout=" prev, pager, next, sizes,jumper"
-      :current-page="pageInfo.page"
-      :page-sizes="[5, 10, 15, 20]"
-      :page-size="pageInfo.pagesize"
-      :total="pageInfo.counts">
-    </el-pagination>
-  </div>
-    </el-card>
   </div>
 </template>
 
 <script>
-import { getQuestionsList, getSubjectList, getSecondLevel, getTagsList, getUserList, delQuestion } from '@/api/hmmm/questions.js'
-import { findDifficultyType, formatDate, html2Text } from '@/utils/index.js'
+import { getSubjectList, getSecondLevel, getTagsList, getUserList } from '@/api/hmmm/questions.js'
 import { difficulty, questionType, direction } from '@/api/hmmm/constants.js'
 import { provinces, citys } from '@/api/hmmm/citys.js'
 export default {
   data () {
     return {
-      tableData: [],
       subOptions: [], // 学科数据
       subjectID: '', // 学科值
       secondLevelOptions: [], // 二级目录数据
@@ -247,16 +170,10 @@ export default {
       provinces: [], // 城市数据
       provincesId: '', // 城市下标
       citys: [], // 区域数据
-      citysId: '',
-      pageInfo: {
-        page: 1,
-        pagesize: 5,
-        counts: 10
-      }
+      citysId: ''
     }
   },
   mounted () {
-    this.getQList()
     this.getSubList()
     this.difficulty = difficulty // 获取难度
     this.questionType = questionType // 获取难度
@@ -264,12 +181,6 @@ export default {
     this.provinces = provinces() // 获取城市
   },
   methods: {
-    // 获取题库数据列表
-    async getQList (obj) {
-      const { data } = await getQuestionsList(obj || this.pageInfo)
-      this.tableData = data.items
-      this.pageInfo.counts = data.counts
-    },
     // 获取学科列表
     async getSubList () {
       const { data } = await getSubjectList()
@@ -293,33 +204,6 @@ export default {
     chooseCity (value) {
       this.citys = citys(value) // 获取地区
     },
-    // 筛选困难的枚举值
-    filterDifficulty (row, column, cellValue) {
-      return findDifficultyType(cellValue, difficulty)
-    },
-    // 筛选题型的枚举值
-    filterType (row, column, cellValue) {
-      return findDifficultyType(cellValue, questionType)
-    },
-    // 过滤时间格式
-    filterTime (row, column, cellValue) {
-      return formatDate(cellValue, 'yyyy-MM-dd hh:mm:ss')
-    },
-    // 过滤题干
-    filterHtml (row, column, cellValue) {
-      return html2Text(cellValue)
-    },
-    // 改变每页条数触发
-    handleSizeChange (num) {
-      this.pageInfo.pagesize = num
-      this.getQList()
-    },
-    // currentPage 改变时会触发
-    handleCurrentChange (page) {
-      this.pageInfo.page = page
-      this.getQList()
-    },
-
     // 清除
     clear () {
       this.subjectID = ''
@@ -337,53 +221,23 @@ export default {
       this.secondLevelOptions = []
       this.tagsOptions = []
       this.citys = []
-      this.getQList() // 重新获取所有数据
+      // 通知父组件重新获取所有值
+      this.$emit('clearSearch')
     },
     // 搜索
     async search () {
-      const obj = { ...this.pageInfo }
+      const obj = { }
       if (this.subjectID) obj.subjectID = this.subjectID
       if (this.keyValue) obj.keyword = this.keyValue
       if (!this.subjectID && !this.keyValue) return
-      this.getQList(obj)
-    },
-
-    // 表格按钮事件
-    // 删除
-    async deleteMsg (id) {
-      try {
-        await this.$confirm('此操作将该题目进行删除, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-        delQuestion(id)
-        this.$message('删除成功')
-      } catch (error) {
-
-      }
-    },
-    // 加入精选
-    async check () {
-      try {
-        await this.$confirm('此操作将该题目加入精选, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'info'
-        })
-        // 添加进精选
-      } catch (error) {
-
-      }
+      // 给父组件传值重新获取搜索后的数据
+      this.$emit('getSearch', obj)
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.container {
-  padding: 10px;
-
   .head {
     margin-bottom: 15px;
     display: flex;
@@ -415,12 +269,4 @@ export default {
       }
     }
   }
-  .el-alert{
-    margin-bottom: 15px;
-  }
-  .block{
-    margin-top: 20px;
-    text-align: right;
-  }
-}
 </style>
