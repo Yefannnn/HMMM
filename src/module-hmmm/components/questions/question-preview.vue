@@ -151,7 +151,7 @@ export default {
       this.trueChoice = data.questionType !== '多选' ? (trueChoiceList[0]?.id) : toArray(trueChoiceList, 'id') */
 
       this.playerOptions.sources[0].src = data.videoURL
-      console.log(this.playerOptions.sources[0].src)
+      // console.log(this.playerOptions.sources[0].src)
     }
   }
 }
