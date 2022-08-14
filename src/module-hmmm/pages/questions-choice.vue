@@ -95,7 +95,6 @@ export default {
       const obj = {}
       if (this.searchObj !== {}) Object.assign(obj, this.pageInfo, this.searchObj)
       if (this.chkState || this.chkState === 0) Object.assign(obj, this.pageInfo, { chkState: this.chkState })
-      console.log('obj', obj, !obj)
       const { data } = await getQueChooseList(obj !== {} ? obj : this.pageInfo)
       this.tableData = data.items
       this.pageInfo.counts = data.counts
