@@ -14,12 +14,15 @@ export const list = page => createAPI(`/companys?page=${page.page}&pagesize=${pa
 // 添加接口
 export const add = data => createAPI('/companys', 'post', data)
 // 更新接口
-export const update = id => createAPI(`/companys/${id}`, 'put')
+export const update = data => createAPI(`/companys/${data.id}`, 'put', data)
 // 删除接口
 export const removeData = id => createAPI(`/companys/${id}`, 'delete')
+
+// 根据id查询数据
+export const getCompanyByIdAPI = id => createAPI(`/companys/${id}`, 'GET')
 
 export const detail = data => createAPI(`/companys/${data.userId}`, 'post', data)
 
 export const disabled = data => createAPI('/companys/state', 'post', data)
 
-export const qiye = data => createAPI('/companys/' + data, 'get')
+export const qiye = data => createAPI('/companys/', 'get', data)

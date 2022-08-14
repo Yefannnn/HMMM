@@ -7,7 +7,7 @@
  * 目录
  */
 
-import createAPI from '@/utils/request'
+import { createAPI } from '@/utils/request'
 
 // 目录列表
 export const list = data => createAPI('/direcotrys', 'get', data)
@@ -30,4 +30,4 @@ export const remove = data =>
   createAPI(`/directorys/${data.id}`, 'delete', data)
 
 // 目录状态
-export const changeState = data => createAPI(`/directorys/${data.id}`, 'get')
+export const changeState = data => createAPI(`/companys/${data.id}/${data.state}`, 'post', data)
