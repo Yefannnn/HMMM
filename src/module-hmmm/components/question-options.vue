@@ -1,14 +1,14 @@
 <template>
   <!-- 选项 -->
   <el-form-item
-    v-if="questionForm.questionType !== 3"
+    v-if="questionForm.questionType !=='简答'"
     label="选项"
     class="options"
   >
     <!-- 单选框组 -->
     <el-radio-group
-      v-if="questionForm.questionType === 1"
-      v-model="OptionIsRight"
+      v-if="questionForm.questionType === '单选'"
+      v-model="OptionIsRightCopy"
     >
       <el-radio
         :label="optionObj.code"
@@ -34,7 +34,7 @@
     </el-radio-group>
     <!-- 多选框组 -->
     <el-checkbox-group
-      v-else-if="questionForm.questionType === 2"
+      v-else-if="questionForm.questionType === '多选'"
       v-model="CheckboxOptionIsRight"
     >
       <el-checkbox
@@ -74,6 +74,7 @@ export default {
   inject: ['reload'],
   created () {
     this.questionOptions = this.questionForm.options
+    this.OptionIsRightCopy = this.OptionIsRight
   },
   props: {
     questionForm: {
@@ -90,7 +91,8 @@ export default {
   },
   data () {
     return {
-      questionOptions: []
+      questionOptions: [],
+      OptionIsRightCopy: null
     }
   },
 

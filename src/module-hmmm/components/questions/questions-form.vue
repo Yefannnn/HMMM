@@ -104,7 +104,7 @@
             </el-select>
           </el-col>
         </el-row>
-        <el-row class="menu-item" :gutter="20">
+        <el-row class="menu-item">
           <el-col class="item" :span="6">
             <span>题目备注</span>
             <el-input v-model="notes"></el-input>
@@ -135,8 +135,8 @@
             </el-select>
           </el-col>
           <el-col class="item" :span="6">
-            <el-button size="mini" @click="clear">清除</el-button>
-            <el-button type="primary" size="mini" @click="search">搜索</el-button>
+            <el-button @click="clear">清除</el-button>
+            <el-button type="primary"  @click="search">搜索</el-button>
           </el-col>
         </el-row>
       </el-form>

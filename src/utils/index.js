@@ -148,11 +148,11 @@ export function param2Obj (url) {
   }
   return JSON.parse(
     '{"' +
-      decodeURIComponent(search)
-        .replace(/"/g, '\\"')
-        .replace(/&/g, '","')
-        .replace(/=/g, '":"') +
-      '"}'
+    decodeURIComponent(search)
+      .replace(/"/g, '\\"')
+      .replace(/&/g, '","')
+      .replace(/=/g, '":"') +
+    '"}'
   )
 }
 
@@ -325,7 +325,7 @@ export function deepClone (source) {
 
 // 过滤枚举类型
 export function findDifficultyType (num, data) {
-  return data.filter(item => item.value === num - 0)[0].label
+  return data.filter(item => item.value === num - 0)[0]?.label
 }
 
 // 补零
@@ -355,4 +355,15 @@ export function formatDate (date, fmt = 'yyyy-MM-dd') {
     }
   }
   return fmt
+}
+
+// 处理对象数组，获取对象某单个属性值返回新的数组
+// arr 对象数组   key 对象单个属性
+export const toArray = (arr, key) => {
+  const weNeedArr = []
+  for (let index = 0; index < arr.length; index++) {
+    const element = arr[index]
+    weNeedArr.push(element[key])
+  }
+  return weNeedArr
 }

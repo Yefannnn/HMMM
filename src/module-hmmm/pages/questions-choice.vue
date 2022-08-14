@@ -80,7 +80,7 @@ export default {
         counts: 10
       },
       pageSizes: [5, 10, 15, 20], // 可选的页数数组
-      searchObj: '', // 判断是否有搜索查询
+      searchObj: {}, // 判断是否有搜索查询
       activeName: 'first', // 标签栏选中值
       chkState: ''
     }
@@ -91,10 +91,11 @@ export default {
   methods: {
     // 获取题库数据列表
     async getQCList () {
-      let obj = ''
-      if (this.searchObj) Object.assign(obj = {}, this.pageInfo, this.searchObj)
-      if (this.chkState || this.chkState === 0) Object.assign(obj = {}, this.pageInfo, { chkState: this.chkState })
-      const { data } = await getQueChooseList(obj || this.pageInfo)
+      console.log(this.searchObj)
+      const obj = {}
+      if (this.searchObj !== {}) Object.assign(obj, this.pageInfo, this.searchObj)
+      if (this.chkState || this.chkState === 0) Object.assign(obj, this.pageInfo, { chkState: this.chkState })
+      const { data } = await getQueChooseList(obj !== {} ? obj : this.pageInfo)
       this.tableData = data.items
       this.pageInfo.counts = data.counts
     },
@@ -109,23 +110,28 @@ export default {
       } else {
         this.chkState = 2
       }
+      this.pageInfo = {
+        page: 1, // 当前页数
+        pagesize: 5, // 每页条数
+        counts: 10
+      }
       this.getQCList()
     },
     // 清除搜索查询
     clearSearch () {
-      this.searchObj = ''
+      this.searchObj = {}
       this.getQCList()
     },
     // 搜索数据
     getSearch (obj) {
-      this.searchObj = obj
+      this.searchObj = { ...obj }
       this.getQCList()
     },
     // 表格组件修改分页时触发
     getChangeData (flag, value) {
-      if (flag === 0) {
+      if (flag === 1) {
         this.pageInfo.page = value // 修改页数
-      } else if (flag === 1) {
+      } else if (flag === 0) {
         this.pageInfo.pagesize = value // 修改每页条数
       }
       this.getQCList()
@@ -146,4 +152,3 @@ export default {
   padding: 10px;
 }
 </style>
-second

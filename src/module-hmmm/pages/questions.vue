@@ -10,9 +10,11 @@
         :pageInfo="pageInfo"
         :pageSizes="pageSizes"
         @getChangeData="getChangeData"
+        @preview="preview"
       >
 
       </questionsTablepannel>
+      <questionPreviewpannel ref="previewRef" :isShow.sync="isShowQuestionPreview" :id="id"/>
     </el-card>
   </div>
 </template>
@@ -21,13 +23,17 @@
 import { getQuestionsList, delQuestion } from '@/api/hmmm/questions.js'
 import questionsFormpannel from '../components/questions/questions-form.vue'
 import questionsTablepannel from '../components/questions/questions-table.vue'
+import questionPreviewpannel from '../components/questions/question-preview.vue'
 export default {
   components: {
     questionsFormpannel,
-    questionsTablepannel
+    questionsTablepannel,
+    questionPreviewpannel
   },
   data () {
     return {
+      isShowQuestionPreview: false,
+      id: '',
       tableData: [],
       pageInfo: {
         page: 1, // 当前页数
@@ -46,7 +52,6 @@ export default {
     async getQList () {
       let searchObj = ''
       if (this.obj) searchObj = Object.assign(this.obj, this.pageInfo)
-      console.log(searchObj)
       const { data } = await getQuestionsList(searchObj || this.pageInfo)
       this.tableData = data.items
       this.pageInfo.counts = data.counts
@@ -62,7 +67,7 @@ export default {
       console.log(this.obj)
       this.getQList()
     },
-    // 表格组件修改分页时触发
+    // 表格组件修改分页时触发s
     getChangeData (flag, value) {
       if (flag === 1) {
         this.pageInfo.page = value // 修改页数
@@ -73,6 +78,14 @@ export default {
     },
 
     // 表格按钮事件
+
+    // 预览
+    // 触发预览事件
+    async preview (id) {
+      this.id = id
+      await this.$refs.previewRef.getPreviewMsg(id)
+      this.isShowQuestionPreview = true
+    },
     // 删除
     async deleteMsg (id) {
       try {
